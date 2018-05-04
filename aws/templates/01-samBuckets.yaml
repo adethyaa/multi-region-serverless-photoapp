@@ -1,0 +1,13 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Create an S3 bucket that can be used by AWS Serverless Application Model (SAM).'
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Join ['-',['samBucket',!Ref AWS::CloudFormation::Stack]]
+
+Outputs:
+  SamBucketName:
+    Description: 'SAM Bucket Name'
+    Value: !GetAtt [S3Bucket, BucketName]
