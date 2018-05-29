@@ -2,10 +2,17 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: GlobalSrvrLsApp
 Parameters:
-    BucketName:
+    LambdaCodeBucketName:
       Type: String
     FacebookId:
-      Type: String      
+      Type: String
+    StaticWebsiteBucketName:
+      Type: String
+      Default: ''
+      Description: Name of the static website s3 bucket. The bucket names must match the names of the website that you are hosting. For example, to host your myphotoapp1.example.com website on Amazon S3, you would create a bucket named myphotoapp1.example.com.
+Conditions:
+  StaticWebsiteBucketNameEmpty:
+    !Equals [!Ref StaticWebsiteBucketName, '']
 Outputs:
   WebsiteURL:
     Value: !GetAtt [GlblSrvrLessApp, WebsiteURL]
@@ -179,7 +186,7 @@ Resources:
       Handler: lambda.handler
       Runtime: nodejs6.10
       CodeUri: 
-        Bucket: !Ref BucketName
+        Bucket: !Ref LambdaCodeBucketName
         Key: upload/UploadS3.zip
       Description: ''
       MemorySize: 128
@@ -231,7 +238,7 @@ Resources:
                 - 'logs:*'
               Resource: "*"
       CodeUri: 
-        Bucket: !Ref BucketName
+        Bucket: !Ref LambdaCodeBucketName
         Key: search/SearchHandler.zip
       Description: ''
       MemorySize: 128
@@ -276,7 +283,7 @@ Resources:
                 - "s3:List*"
               Resource: "*"   
       CodeUri: 
-        Bucket: !Ref BucketName
+        Bucket: !Ref LambdaCodeBucketName
         Key: gatherMetadata/GatherMetadata.zip
       Description: ''
       MemorySize: 128
@@ -301,6 +308,7 @@ Resources:
   GlblSrvrLessApp:
     Type: AWS::S3::Bucket
     Properties:
+      BucketName: !If [StaticWebsiteBucketNameEmpty, !Ref "AWS::NoValue", !Ref StaticWebsiteBucketName]
       AccessControl: Private
       WebsiteConfiguration:
         IndexDocument: index.html

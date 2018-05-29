@@ -35,7 +35,7 @@ createResource() {
         srcBktArr+=($SRC_BUK_NAME)
         aws s3 mb s3://$SRC_BUK_NAME --region $i
         aws s3 cp ./lambda s3://$SRC_BUK_NAME/ --recursive --region $i 
-        aws cloudformation deploy --region $i --template ./GlblSrvlsApp.yaml --stack-name $ROOT_NAME --capabilities CAPABILITY_IAM --parameter-overrides BucketName=$SRC_BUK_NAME FacebookId=$FACEBOOK_ID > /tmp/output.txt &
+        aws cloudformation deploy --region $i --template ./templates/GlblSrvlsApp.yaml --stack-name $ROOT_NAME --capabilities CAPABILITY_IAM --parameter-overrides BucketName=$SRC_BUK_NAME FacebookId=$FACEBOOK_ID > /tmp/output.txt &
     done
     wait;
 }
